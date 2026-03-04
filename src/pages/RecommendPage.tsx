@@ -18,54 +18,6 @@ const RecommendPage = () => {
     setResults(null);
 
     try {
-<<<<<<< HEAD
-      const response = await supabase.functions.invoke("recommend", {
-        body: { profile },
-      });
-
-      console.log("Supabase response:", response);
-
-      const data = response?.data;
-      const error = response?.error;
-
-      if (error) {
-        toast({
-          title: "Error",
-          description: error?.message || "Failed to get recommendations.",
-          variant: "destructive",
-        });
-
-        setResults({
-          error: error?.message || "Unknown error",
-        });
-
-      } else if (data) {
-
-        setResults(data);
-
-        setTimeout(() => {
-          resultsRef.current?.scrollIntoView({ behavior: "smooth" });
-        }, 100);
-
-      } else {
-
-        toast({
-          title: "Error",
-          description: "No response from AI.",
-          variant: "destructive",
-        });
-
-        setResults({
-          error: "No response from AI",
-        });
-
-      }
-
-    } catch (err: any) {
-
-      console.error("Request error:", err);
-
-=======
       const { data, error } = await supabase.functions.invoke("recommend", {
         body: { profile },
       });
@@ -76,29 +28,38 @@ const RecommendPage = () => {
           description: error.message || "Failed to get recommendations.",
           variant: "destructive",
         });
-        setResults({ error: error.message });
-      } else {
+        setResults({
+          error: error.message || "Unknown error",
+        });
+      } else if (data) {
         setResults(data);
+
+        // Wait for the DOM to update with the new results before scrolling
         setTimeout(() => {
-          resultsRef.current?.scrollIntoView({ behavior: "smooth" });
+          resultsRef.current?.scrollIntoView({
+            behavior: "smooth",
+          });
         }, 100);
+      } else {
+        toast({
+          title: "Error",
+          description: "No response from AI.",
+          variant: "destructive",
+        });
+        setResults({
+          error: "No response from AI",
+        });
       }
     } catch (err: any) {
->>>>>>> d5b8ed6a5bc2e9af7c6c966e8bc927314377ef5f
+      console.error("Request error:", err);
       toast({
         title: "Error",
         description: err?.message || "Something went wrong.",
         variant: "destructive",
       });
-<<<<<<< HEAD
-
       setResults({
         error: err?.message || "Unknown error",
       });
-
-=======
-      setResults({ error: err?.message || "Unknown error" });
->>>>>>> d5b8ed6a5bc2e9af7c6c966e8bc927314377ef5f
     } finally {
       setIsLoading(false);
     }
@@ -108,10 +69,7 @@ const RecommendPage = () => {
     <main className="min-h-screen bg-background">
       <div className="bg-gradient-hero border-b border-border">
         <div className="container mx-auto px-6 py-8">
-<<<<<<< HEAD
-
-=======
->>>>>>> d5b8ed6a5bc2e9af7c6c966e8bc927314377ef5f
+          {/* FIXED JSX SYNTAX ERROR HERE */}
           <a
             href="/"
             className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors font-body mb-4"
@@ -129,16 +87,9 @@ const RecommendPage = () => {
           </motion.h1>
 
           <p className="font-body text-muted-foreground mt-2 max-w-xl">
-<<<<<<< HEAD
             Enter your health profile to receive personalized hospital,
             scheme, and NGO recommendations powered by explainable AI.
           </p>
-
-=======
-            Enter your health profile to receive personalized hospital, scheme,
-            and NGO recommendations powered by explainable AI.
-          </p>
->>>>>>> d5b8ed6a5bc2e9af7c6c966e8bc927314377ef5f
         </div>
       </div>
 
@@ -151,10 +102,6 @@ const RecommendPage = () => {
       {results && (
         <section ref={resultsRef} className="pb-20">
           <div className="container mx-auto px-6">
-<<<<<<< HEAD
-
-=======
->>>>>>> d5b8ed6a5bc2e9af7c6c966e8bc927314377ef5f
             <motion.h2
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -165,10 +112,6 @@ const RecommendPage = () => {
             </motion.h2>
 
             <RecommendationResults data={results} />
-<<<<<<< HEAD
-
-=======
->>>>>>> d5b8ed6a5bc2e9af7c6c966e8bc927314377ef5f
           </div>
         </section>
       )}
