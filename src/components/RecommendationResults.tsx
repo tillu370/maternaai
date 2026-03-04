@@ -1,212 +1,608 @@
 import { motion } from "framer-motion";
-import { Hospital, Shield, Heart, ChevronDown, ChevronUp, AlertCircle } from "lucide-react";
+import {
+  Hospital,
+  Shield,
+  Heart,
+  ChevronDown,
+  ChevronUp,
+  AlertCircle,
+  Activity
+} from "lucide-react";
 import { useState } from "react";
 
 interface RecommendationData {
-  hospitals?: Array<{
-    name: string;
-    location: string;
-    suitability: string;
-    distance: string;
-    confidence: number;
-  }>;
-  schemes?: Array<{
-    name: string;
-    benefits: string;
-    eligibility: string;
-    howToApply: string;
-    confidence: number;
-  }>;
-  ngos?: Array<{
-    name: string;
-    supportType: string;
-    coverage: string;
-    contact: string;
-    confidence: number;
-  }>;
+
+  hospitals?: any[];
+
+  schemes?: any[];
+
+  ngos?: any[];
+
+  dietPlan?: string[];
+
+  precautions?: string[];
+
+  exercises?: string[];
+
+  dos?: string[];
+
+  donts?: string[];
+
   overallConfidence?: number;
+
   reasoning?: string;
-  raw?: string;
-  parseError?: boolean;
+
   error?: string;
+
 }
 
 interface Props {
   data: RecommendationData;
 }
 
-const ConfidenceBadge = ({ score }: { score: number }) => {
-  const color =
-    score >= 80
-      ? "bg-secondary/15 text-secondary"
-      : score >= 60
-      ? "bg-accent/20 text-accent-foreground"
-      : "bg-destructive/15 text-destructive";
+
+
+const ConfidenceBadge = ({ score }: { score:number }) => {
+
   return (
-    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium font-body ${color}`}>
+
+    <span className="
+    px-2 py-1
+    rounded-full
+    text-xs
+    bg-primary/10
+    text-primary
+    ">
+
       {score}% confidence
+
     </span>
+
   );
+
 };
+
+
 
 const Section = ({
   icon: Icon,
   title,
-  children,
-  defaultOpen = true,
-}: {
-  icon: typeof Hospital;
-  title: string;
-  children: React.ReactNode;
-  defaultOpen?: boolean;
-}) => {
-  const [open, setOpen] = useState(defaultOpen);
-  return (
-    <div className="rounded-2xl border border-border/50 bg-card shadow-card overflow-hidden">
+  children
+}: any) => {
+
+  const [open,setOpen]=useState(true);
+
+  return(
+
+    <div className="
+    rounded-2xl
+    border
+    bg-card
+    shadow
+    overflow-hidden
+    ">
+
       <button
-        onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between p-5 hover:bg-muted/30 transition-colors"
-      >
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-warm flex items-center justify-center">
-            <Icon className="w-5 h-5 text-primary-foreground" />
-          </div>
-          <h3 className="font-display text-lg font-semibold text-foreground">{title}</h3>
+      onClick={()=>setOpen(!open)}
+      className="
+      w-full
+      flex
+      justify-between
+      items-center
+      p-5
+      hover:bg-muted/30
+      ">
+
+        <div className="flex gap-3 items-center">
+
+          <Icon className="w-5 h-5"/>
+
+          <h3 className="text-lg font-semibold">
+
+            {title}
+
+          </h3>
+
         </div>
-        {open ? (
-          <ChevronUp className="w-5 h-5 text-muted-foreground" />
-        ) : (
-          <ChevronDown className="w-5 h-5 text-muted-foreground" />
-        )}
+
+        {open ?
+
+        <ChevronUp className="w-5 h-5"/>
+
+        :
+
+        <ChevronDown className="w-5 h-5"/>
+
+        }
+
       </button>
-      {open && <div className="px-5 pb-5 space-y-4">{children}</div>}
+
+
+      {open &&
+
+      <div className="p-5 space-y-3">
+
+        {children}
+
+      </div>
+
+      }
+
     </div>
+
   );
+
 };
 
-const RecommendationResults = ({ data }: Props) => {
-  if (data.error) {
-    return (
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="p-6 rounded-2xl bg-destructive/10 border border-destructive/20 flex items-start gap-3 max-w-4xl mx-auto"
-      >
-        <AlertCircle className="w-5 h-5 text-destructive mt-0.5 shrink-0" />
-        <div>
-          <p className="font-body font-medium text-foreground">Something went wrong</p>
-          <p className="font-body text-sm text-muted-foreground mt-1">{data.error}</p>
-        </div>
-      </motion.div>
-    );
-  }
 
-  if (data.parseError && data.raw) {
-    return (
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="p-6 rounded-2xl bg-card border border-border/50 shadow-card max-w-4xl mx-auto"
-      >
-        <p className="font-body text-sm text-muted-foreground whitespace-pre-wrap">{data.raw}</p>
-      </motion.div>
-    );
-  }
 
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className="space-y-6 max-w-4xl mx-auto"
-    >
-      {/* Overall confidence */}
-      {data.overallConfidence != null && (
-        <div className="text-center mb-2">
-          <div className="inline-flex items-center gap-3 px-5 py-3 rounded-2xl bg-card border border-border/50 shadow-card">
-            <span className="font-body text-sm text-muted-foreground">Overall Confidence</span>
-            <span className="font-display text-2xl font-bold text-foreground">
-              {data.overallConfidence}%
-            </span>
-          </div>
-        </div>
-      )}
+const RecommendationResults = ({data}:Props)=>{
 
-      {/* Hospitals */}
-      {data.hospitals && data.hospitals.length > 0 && (
-        <Section icon={Hospital} title="Recommended Hospitals">
-          {data.hospitals.map((h, i) => (
-            <div key={i} className="p-4 rounded-xl bg-muted/30 border border-border/30">
-              <div className="flex items-start justify-between gap-3 mb-2">
-                <h4 className="font-display text-base font-semibold text-foreground">{h.name}</h4>
-                <ConfidenceBadge score={h.confidence} />
-              </div>
-              <p className="font-body text-sm text-muted-foreground mb-1">
-                📍 {h.location} · {h.distance}
-              </p>
-              <p className="font-body text-sm text-foreground/80">{h.suitability}</p>
-            </div>
-          ))}
-        </Section>
-      )}
 
-      {/* Schemes */}
-      {data.schemes && data.schemes.length > 0 && (
-        <Section icon={Shield} title="Eligible Government Schemes">
-          {data.schemes.map((s, i) => (
-            <div key={i} className="p-4 rounded-xl bg-muted/30 border border-border/30">
-              <div className="flex items-start justify-between gap-3 mb-2">
-                <h4 className="font-display text-base font-semibold text-foreground">{s.name}</h4>
-                <ConfidenceBadge score={s.confidence} />
-              </div>
-              <p className="font-body text-sm text-foreground/80 mb-1">
-                <strong>Benefits:</strong> {s.benefits}
-              </p>
-              <p className="font-body text-sm text-muted-foreground mb-1">
-                <strong>Eligibility:</strong> {s.eligibility}
-              </p>
-              <p className="font-body text-sm text-secondary font-medium">
-                <strong>How to Apply:</strong> {s.howToApply}
-              </p>
-            </div>
-          ))}
-        </Section>
-      )}
+if(data?.error){
 
-      {/* NGOs */}
-      {data.ngos && data.ngos.length > 0 && (
-        <Section icon={Heart} title="NGO Support">
-          {data.ngos.map((n, i) => (
-            <div key={i} className="p-4 rounded-xl bg-muted/30 border border-border/30">
-              <div className="flex items-start justify-between gap-3 mb-2">
-                <h4 className="font-display text-base font-semibold text-foreground">{n.name}</h4>
-                <ConfidenceBadge score={n.confidence} />
-              </div>
-              <p className="font-body text-sm text-foreground/80 mb-1">
-                <strong>Support:</strong> {n.supportType}
-              </p>
-              <p className="font-body text-sm text-muted-foreground mb-1">
-                <strong>Coverage:</strong> {n.coverage}
-              </p>
-              <p className="font-body text-sm text-secondary font-medium">
-                <strong>Contact:</strong> {n.contact}
-              </p>
-            </div>
-          ))}
-        </Section>
-      )}
+return(
 
-      {/* Reasoning */}
-      {data.reasoning && (
-        <div className="p-5 rounded-2xl bg-muted/20 border border-border/30">
-          <h4 className="font-display text-sm font-semibold text-foreground mb-2">AI Reasoning</h4>
-          <p className="font-body text-sm text-muted-foreground leading-relaxed">
-            {data.reasoning}
-          </p>
-        </div>
-      )}
-    </motion.div>
-  );
+<div className="p-6 text-center">
+
+{data.error}
+
+</div>
+
+);
+
+}
+
+
+
+return(
+
+<motion.div
+
+initial={{opacity:0,y:20}}
+
+animate={{opacity:1,y:0}}
+
+className="space-y-6 max-w-4xl mx-auto"
+
+>
+
+
+{/* Overall Confidence */}
+
+{data.overallConfidence && (
+
+<div className="text-center">
+
+<div className="
+inline-block
+px-6 py-3
+rounded-xl
+bg-card
+border
+">
+
+Overall Confidence:
+
+<strong className="ml-2">
+
+{data.overallConfidence}%
+
+</strong>
+
+</div>
+
+</div>
+
+)}
+
+
+
+{/* Hospitals */}
+
+{data.hospitals?.length>0 &&(
+
+<Section
+
+icon={Hospital}
+
+title="Recommended Hospitals"
+
+>
+
+{data.hospitals.map((h,i)=>(
+
+<div
+key={i}
+className="
+p-4
+border
+rounded-xl
+bg-muted/20
+">
+
+<div className="
+flex
+justify-between
+mb-2
+">
+
+<h4 className="font-semibold">
+
+{h.name}
+
+</h4>
+
+<ConfidenceBadge score={h.confidence}/>
+
+</div>
+
+
+<div className="text-sm text-muted-foreground">
+
+📍 {h.location}
+
+</div>
+
+
+<div className="text-sm">
+
+{h.suitability}
+
+</div>
+
+</div>
+
+))}
+
+</Section>
+
+)}
+
+
+
+{/* Schemes */}
+
+{data.schemes?.length>0 &&(
+
+<Section
+
+icon={Shield}
+
+title="Government Schemes"
+
+>
+
+{data.schemes.map((s,i)=>(
+
+<div
+key={i}
+className="
+p-4
+border
+rounded-xl
+bg-muted/20
+">
+
+<div className="
+flex
+justify-between
+mb-2
+">
+
+<h4 className="font-semibold">
+
+{s.name}
+
+</h4>
+
+<ConfidenceBadge score={s.confidence}/>
+
+</div>
+
+
+<div className="text-sm">
+
+Benefits:
+
+{s.benefits}
+
+</div>
+
+
+<div className="text-sm text-muted-foreground">
+
+Eligibility:
+
+{s.eligibility}
+
+</div>
+
+</div>
+
+))}
+
+</Section>
+
+)}
+
+
+
+{/* NGOs */}
+
+{data.ngos?.length>0 &&(
+
+<Section
+
+icon={Heart}
+
+title="NGO Support (ASHA Workers)"
+
+>
+
+{data.ngos.map((n,i)=>(
+
+<div
+key={i}
+className="
+p-4
+border
+rounded-xl
+bg-muted/20
+">
+
+<div className="
+flex
+justify-between
+mb-2
+">
+
+<h4 className="font-semibold">
+
+{n.name}
+
+</h4>
+
+<ConfidenceBadge score={n.confidence}/>
+
+</div>
+
+
+<div className="text-sm">
+
+Support:
+
+{n.supportType}
+
+</div>
+
+
+<div className="text-sm text-muted-foreground">
+
+Contact:
+
+{n.contact}
+
+</div>
+
+</div>
+
+))}
+
+</Section>
+
+)}
+
+
+
+{/* Diet */}
+
+{data.dietPlan?.length>0 &&(
+
+<Section
+
+icon={Heart}
+
+title="Pregnancy Diet"
+
+>
+
+{data.dietPlan.map((d,i)=>(
+
+<div
+key={i}
+className="
+p-3
+rounded-lg
+border
+bg-muted/20
+">
+
+• {d}
+
+</div>
+
+))}
+
+</Section>
+
+)}
+
+
+
+{/* Precautions */}
+
+{data.precautions?.length>0 &&(
+
+<Section
+
+icon={AlertCircle}
+
+title="Precautions"
+
+>
+
+{data.precautions.map((d,i)=>(
+
+<div
+key={i}
+className="
+p-3
+rounded-lg
+border
+bg-muted/20
+">
+
+• {d}
+
+</div>
+
+))}
+
+</Section>
+
+)}
+
+
+
+{/* Exercises */}
+
+{data.exercises?.length>0 &&(
+
+<Section
+
+icon={Activity}
+
+title="Safe Exercises"
+
+>
+
+{data.exercises.map((d,i)=>(
+
+<div
+key={i}
+className="
+p-3
+rounded-lg
+border
+bg-muted/20
+">
+
+• {d}
+
+</div>
+
+))}
+
+</Section>
+
+)}
+
+
+
+{/* Do's */}
+
+{data.dos?.length>0 &&(
+
+<Section
+
+icon={Shield}
+
+title="Do's"
+
+>
+
+{data.dos.map((d,i)=>(
+
+<div
+key={i}
+className="
+p-3
+rounded-lg
+border
+bg-muted/20
+">
+
+• {d}
+
+</div>
+
+))}
+
+</Section>
+
+)}
+
+
+
+{/* Don'ts */}
+
+{data.donts?.length>0 &&(
+
+<Section
+
+icon={AlertCircle}
+
+title="Don'ts"
+
+>
+
+{data.donts.map((d,i)=>(
+
+<div
+key={i}
+className="
+p-3
+rounded-lg
+border
+bg-muted/20
+">
+
+• {d}
+
+</div>
+
+))}
+
+</Section>
+
+)}
+
+
+
+{/* AI Reasoning */}
+
+{data.reasoning &&(
+
+<div className="
+p-5
+border
+rounded-xl
+bg-muted/10
+">
+
+<h4 className="font-semibold mb-2">
+
+AI Reasoning
+
+</h4>
+
+<p className="text-sm text-muted-foreground">
+
+{data.reasoning}
+
+</p>
+
+</div>
+
+)}
+
+
+
+</motion.div>
+
+);
+
 };
 
 export default RecommendationResults;

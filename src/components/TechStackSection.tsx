@@ -5,17 +5,17 @@ const stacks = [
   {
     icon: Code2,
     title: "Frontend",
-    items: ["React (Vite)", "Axios", "Responsive UI"],
+    items: ["React (Vite)", "Responsive UI"],
   },
   {
     icon: Server,
     title: "Backend",
-    items: ["FastAPI (Python)", "CSV Datasets", "Rule-based Filtering"],
+    items: ["Supabase Edge Functions", "Deno with", "Typescript"],
   },
   {
     icon: Cpu,
     title: "AI Layer",
-    items: ["LLM Reasoning", "Confidence Scoring", "Explainable Output"],
+    items: ["Gemini flash model for", "Confidence Scoring", "Explainable Output"],
   },
 ];
 

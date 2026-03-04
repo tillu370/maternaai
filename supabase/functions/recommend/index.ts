@@ -8,6 +8,7 @@ const corsHeaders = {
 
 serve(async (req) => {
 
+  // Handle CORS
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
@@ -18,35 +19,107 @@ serve(async (req) => {
 
     const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY");
 
-    const prompt = `You are MotherSource AI.
+
+
+    // AI PROMPT
+    const prompt = `You are Materna AI - Pregnancy Care Assistant.
+
+Generate personalized pregnancy recommendations based on:
+
+- Pregnancy Weeks
+- Risk Level
+- Monthly Income
+- Location
+
+Recommendations must be:
+
+- Practical
+- Affordable
+- Safe
+- Local if possible
+
+Do NOT copy internet diet plans.
+
+Suggest realistic Indian foods.
+
 
 Return JSON EXACTLY like this:
 
 {
+
 "hospitals":[
 {"name":"","location":"","suitability":"","distance":"","confidence":80}
 ],
+
 "schemes":[
 {"name":"","benefits":"","eligibility":"","howToApply":"","confidence":80}
 ],
+
 "ngos":[
 {"name":"","supportType":"","coverage":"","contact":"","confidence":80}
 ],
+
+"dietPlan":[
+"",
+"",
+"",
+""
+],
+
+"precautions":[
+"",
+"",
+""
+],
+
+"exercises":[
+"",
+"",
+""
+],
+
+"dos":[
+"",
+"",
+""
+],
+
+"donts":[
+"",
+"",
+""
+],
+
 "overallConfidence":80,
-"reasoning":"short explanation"
+
+"reasoning":"Explain briefly why these recommendations match pregnancy weeks and income."
+
 }
 
-Patient:
+
+
+Patient Details:
 
 State: ${profile.state}
+
 District: ${profile.district}
-Area: ${profile.areaType}
-Income: ${profile.income}
-Risk: ${profile.riskLevel}
-Weeks: ${profile.gestationalAge}
+
+Area Type: ${profile.areaType}
+
+Monthly Income: ${profile.income}
+
+Risk Level: ${profile.riskLevel}
+
+Pregnancy Weeks: ${profile.gestationalAge}
+
+
 
 Return JSON ONLY.
 `;
+
+
+
+    // GEMINI CALL
 
     const response = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${GEMINI_API_KEY}`,
@@ -59,9 +132,7 @@ Return JSON ONLY.
           contents: [
             {
               parts: [
-                {
-                  text: prompt
-                }
+                { text: prompt }
               ]
             }
           ]
@@ -69,18 +140,28 @@ Return JSON ONLY.
       }
     );
 
+
     const data = await response.json();
+
 
     const text =
       data?.candidates?.[0]?.content?.parts?.[0]?.text || "";
 
+
     let jsonStr = text;
+
+
+    // Remove markdown if Gemini sends it
 
     const match = text.match(/```json\s*([\s\S]*?)```/);
 
     if (match) jsonStr = match[1];
 
+
+
     const result = JSON.parse(jsonStr);
+
+
 
     return new Response(
       JSON.stringify(result),
@@ -91,6 +172,8 @@ Return JSON ONLY.
         }
       }
     );
+
+
 
   } catch (err) {
 

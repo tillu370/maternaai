@@ -8,7 +8,7 @@ const FooterSection = () => (
         Healthcare + Artificial Intelligence + Social Impact
       </p>
       <p className="font-body text-xs text-muted-foreground">
-        Built for hackathon evaluation — a vision for equitable maternal healthcare access.
+        Built for evaluation — a vision for equitable maternal healthcare access.
       </p>
     </div>
   </footer>
