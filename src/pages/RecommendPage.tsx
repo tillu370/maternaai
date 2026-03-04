@@ -18,6 +18,7 @@ const RecommendPage = () => {
     setResults(null);
 
     try {
+<<<<<<< HEAD
       const response = await supabase.functions.invoke("recommend", {
         body: { profile },
       });
@@ -64,16 +65,40 @@ const RecommendPage = () => {
 
       console.error("Request error:", err);
 
+=======
+      const { data, error } = await supabase.functions.invoke("recommend", {
+        body: { profile },
+      });
+
+      if (error) {
+        toast({
+          title: "Error",
+          description: error.message || "Failed to get recommendations.",
+          variant: "destructive",
+        });
+        setResults({ error: error.message });
+      } else {
+        setResults(data);
+        setTimeout(() => {
+          resultsRef.current?.scrollIntoView({ behavior: "smooth" });
+        }, 100);
+      }
+    } catch (err: any) {
+>>>>>>> d5b8ed6a5bc2e9af7c6c966e8bc927314377ef5f
       toast({
         title: "Error",
         description: err?.message || "Something went wrong.",
         variant: "destructive",
       });
+<<<<<<< HEAD
 
       setResults({
         error: err?.message || "Unknown error",
       });
 
+=======
+      setResults({ error: err?.message || "Unknown error" });
+>>>>>>> d5b8ed6a5bc2e9af7c6c966e8bc927314377ef5f
     } finally {
       setIsLoading(false);
     }
@@ -83,7 +108,10 @@ const RecommendPage = () => {
     <main className="min-h-screen bg-background">
       <div className="bg-gradient-hero border-b border-border">
         <div className="container mx-auto px-6 py-8">
+<<<<<<< HEAD
 
+=======
+>>>>>>> d5b8ed6a5bc2e9af7c6c966e8bc927314377ef5f
           <a
             href="/"
             className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors font-body mb-4"
@@ -101,10 +129,16 @@ const RecommendPage = () => {
           </motion.h1>
 
           <p className="font-body text-muted-foreground mt-2 max-w-xl">
+<<<<<<< HEAD
             Enter your health profile to receive personalized hospital,
             scheme, and NGO recommendations powered by explainable AI.
           </p>
 
+=======
+            Enter your health profile to receive personalized hospital, scheme,
+            and NGO recommendations powered by explainable AI.
+          </p>
+>>>>>>> d5b8ed6a5bc2e9af7c6c966e8bc927314377ef5f
         </div>
       </div>
 
@@ -117,7 +151,10 @@ const RecommendPage = () => {
       {results && (
         <section ref={resultsRef} className="pb-20">
           <div className="container mx-auto px-6">
+<<<<<<< HEAD
 
+=======
+>>>>>>> d5b8ed6a5bc2e9af7c6c966e8bc927314377ef5f
             <motion.h2
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -128,7 +165,10 @@ const RecommendPage = () => {
             </motion.h2>
 
             <RecommendationResults data={results} />
+<<<<<<< HEAD
 
+=======
+>>>>>>> d5b8ed6a5bc2e9af7c6c966e8bc927314377ef5f
           </div>
         </section>
       )}
